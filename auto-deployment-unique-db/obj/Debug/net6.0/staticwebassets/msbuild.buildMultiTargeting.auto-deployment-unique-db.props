@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\auto-deployment-unique-db.props" />
+</Project>

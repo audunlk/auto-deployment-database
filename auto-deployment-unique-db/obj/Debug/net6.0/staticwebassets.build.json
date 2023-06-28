@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "GZUi7tUBoSYKK51OjO8P2yh+c0mu7oYX0pP90ZANyyk=",
+  "Source": "auto-deployment-unique-db",
+  "BasePath": "_content/auto-deployment-unique-db",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

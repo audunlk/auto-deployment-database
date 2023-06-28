@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\auto-deployment-unique-db.props" />
+</Project>
