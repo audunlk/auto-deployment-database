@@ -46,11 +46,8 @@ namespace auto_deployment_unique_db.Controllers
 
                 //local connection string
                 string dynamicConnectionString = $"Server=localhost;Port=5432;Database={uniqueIdentifierString};User Id=postgres;Password=387456";
-                //for elephantSQL use this connection string
-                //string dynamicConnectionString = "Server=surus.db.elephantsql.com;Port=5432;User Id=pcleqnkw;Password=A86hU15aV-2UcNzcvAkc9GhLmY4Q98dH;Database=pcleqnkw;";
 
-                //for azure use this connection string
-                //string dynamicConnectionString = $"Server=postgres-server-unique-db.postgres.database.azure.com;Port=5432;Database={uniqueIdentifierString};User Id=postgres@postgres-server-unique-db;Password=387456;SslMode=Require;";
+
 
                 var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
                 optionsBuilder.UseNpgsql(dynamicConnectionString);
