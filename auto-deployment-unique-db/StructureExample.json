@@ -1,0 +1,69 @@
+{
+  "tables": [
+    {
+      "tableName": "users",
+      "columns": [
+        {
+          "columnName": "user_id",
+          "dataType": "serial",
+          "isPrimaryKey": true
+        },
+        {
+          "columnName": "email",
+          "dataType": "varchar(25)",
+          "isUnique": true,
+          "isNullable":  false
+        },
+        {
+          "columnName": "first_name",
+          "dataType": "varchar(25)"
+        },
+        {
+          "columnName": "last_name",
+          "dataType": "varchar(25)"
+        },
+        {
+          "columnName": "username",
+          "dataType": "varchar(25)"
+        },
+        {
+          "columnName": "address_id",
+          "dataType": "int",
+          "isForeignKey": true,
+          "referencedTable": "addresses",
+          "referencedColumn": "address_id"
+        },
+        {
+          "columnName": "phone",
+          "dataType": "varchar(25)"
+        }
+      ]
+    },
+    {
+      "tableName": "addresses",
+      "columns": [
+        {
+          "columnName": "address_id",
+          "dataType": "SERIAL",
+          "isPrimaryKey": true
+        },
+        {
+          "columnName": "street",
+          "dataType": "varchar(25)"
+        },
+        {
+          "columnName": "city",
+          "dataType": "varchar(25)"
+        },
+        {
+          "columnName": "state",
+          "dataType": "varchar(25)"
+        },
+        {
+          "columnName": "postal_code",
+          "dataType": "varchar(25)"
+        }
+      ]
+    }
+  ]
+}

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\audun\\source\\repos\\auto-deployment-unique-db\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj": {}
+    "C:\\Users\\audun\\source\\repos\\auto-deployment-database\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj": {}
   },
   "projects": {
-    "C:\\Users\\audun\\source\\repos\\auto-deployment-unique-db\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj": {
+    "C:\\Users\\audun\\source\\repos\\auto-deployment-database\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\audun\\source\\repos\\auto-deployment-unique-db\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj",
+        "projectUniqueName": "C:\\Users\\audun\\source\\repos\\auto-deployment-database\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj",
         "projectName": "auto-deployment-unique-db",
-        "projectPath": "C:\\Users\\audun\\source\\repos\\auto-deployment-unique-db\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj",
+        "projectPath": "C:\\Users\\audun\\source\\repos\\auto-deployment-database\\auto-deployment-unique-db\\auto-deployment-unique-db.csproj",
         "packagesPath": "C:\\Users\\audun\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\audun\\source\\repos\\auto-deployment-unique-db\\auto-deployment-unique-db\\obj\\",
+        "outputPath": "C:\\Users\\audun\\source\\repos\\auto-deployment-database\\auto-deployment-unique-db\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\audun\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -44,6 +44,10 @@
             "EFCore.NamingConventions": {
               "target": "Package",
               "version": "[7.0.2, )"
+            },
+            "Microsoft.AspNetCore.Cors": {
+              "target": "Package",
+              "version": "[2.2.0, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",

@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using auto_deployment_unique_db.Models;
-using System;
 
-
-namespace auto_deployment_unique_db
+//see StructureExample.json for example of DynamicTableRequest
+namespace auto_deployment_unique_db.Data
 {
     public class MyDbContext : DbContext
     {
@@ -26,60 +25,116 @@ namespace auto_deployment_unique_db
             }
         }
 
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Product> Products { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public void CreateTablesAndColumns(DynamicTableRequest dynamicTableRequest)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Customer>(entity =>
+            foreach (var table in dynamicTableRequest.Tables)
             {
-                entity.ToTable("customers");
-                entity.HasKey(c => c.Id).HasName("customer_id");
-                entity.Property(c => c.Id).HasColumnName("id");
-                entity.Property(c => c.FirstName).HasMaxLength(50).IsRequired().HasColumnName("first_name");
-                entity.Property(c => c.LastName).HasMaxLength(50).IsRequired().HasColumnName("last_name");
-                entity.HasData(
-                    new Customer { Id = 1, FirstName = "John", LastName = "Smith" },
-                    new Customer { Id = 2, FirstName = "Jane", LastName = "Doe" }
-                );
-            });
+                string tableName = table.TableName;
+                List<DynamicColumn> columns = table.Columns;
 
-            modelBuilder.Entity<Product>(entity =>
+                string sql = $"CREATE TABLE \"{tableName}\" (";
+
+                foreach (var column in columns)
+                {
+                    string columnName = column.ColumnName;
+                    string dataType = column.DataType;
+
+                    sql += $"\"{columnName}\" {dataType},";
+                }
+
+                sql = sql.Remove(sql.Length - 1);
+                sql += ")";
+
+                Database.ExecuteSqlRaw(sql);
+            }
+        }
+        public void AddPrimaryKeys(DynamicTableRequest dynamicTableRequest)
+        {
+            foreach (var table in dynamicTableRequest.Tables)
             {
-                entity.ToTable("products");
-                entity.HasKey(p => p.Id).HasName("product_id");
-                entity.Property(p => p.Id).HasColumnName("id");
-                entity.Property(p => p.Name).HasMaxLength(100).IsRequired().HasColumnName("name");
-                entity.Property(p => p.Price).IsRequired().HasColumnName("price");
-                entity.HasData(
-                    new Product { Id = 1, Name = "Product 1", Price = 10.99m },
-                    new Product { Id = 2, Name = "Product 2", Price = 19.99m },
-                    new Product { Id = 3, Name = "Product 3", Price = 7.99m }
-                );
-            });
+                string tableName = table.TableName;
+                List<DynamicColumn> columns = table.Columns;
 
-            modelBuilder.Entity<Order>(entity =>
+                string sql = $"ALTER TABLE \"{tableName}\" ADD CONSTRAINT PK_{tableName} PRIMARY KEY (";
+
+                foreach (var column in columns)
+                {
+                    if (column.IsPrimaryKey)
+                    {
+                        string columnName = column.ColumnName;
+                        sql += $"\"{columnName}\",";
+                    }
+                }
+
+                sql = sql.Remove(sql.Length - 1);
+                sql += ")";
+
+                Database.ExecuteSqlRaw(sql);
+            }
+        }
+        public void AddForeignKeys(DynamicTableRequest dynamicTableRequest)
+        {
+            foreach (var table in dynamicTableRequest.Tables)
             {
-                entity.ToTable("orders");
-                entity.HasKey(o => o.Id).HasName("order_id");
-                entity.Property(o => o.Id).HasColumnName("id");
-                entity.Property(o => o.OrderDate).IsRequired().HasColumnName("order_date");
-                entity.HasOne(o => o.Customer)
-                    .WithMany(c => c.Orders)
-                    .HasForeignKey(o => o.CustomerId)
-                    .OnDelete(DeleteBehavior.Cascade);
-                entity.Property(o => o.CustomerId).HasColumnName("customer_id");
-                entity.HasData(
-                    new Order { Id = 1, OrderDate = DateTime.UtcNow, CustomerId = 1 },
-                    new Order { Id = 2, OrderDate = DateTime.UtcNow, CustomerId = 1 },
-                    new Order { Id = 3, OrderDate = DateTime.UtcNow, CustomerId = 2 }
-                );
-            });
+                string tableName = table.TableName;
+                List<DynamicColumn> columns = table.Columns;
 
+                foreach (var column in columns)
+                {
+                    if (column.IsForeignKey)
+                    {
+                        string columnName = column.ColumnName;
+                        string referencedTable = column.ReferencedTable;
+                        string referencedColumn = column.ReferencedColumn;
 
+                        string sql = $"ALTER TABLE \"{tableName}\" ADD CONSTRAINT FK_{tableName}_{referencedTable} FOREIGN KEY (\"{columnName}\") REFERENCES \"{referencedTable}\" (\"{referencedColumn}\")";
 
+                        Database.ExecuteSqlRaw(sql);
+                    }
+                }
+            }
+        }
+        public void AddIsNullable(DynamicTableRequest dynamicTableRequest)
+        {
+            foreach(var table in dynamicTableRequest.Tables)
+            {
+                string tableName = table.TableName;
+                List<DynamicColumn> columns = table.Columns;
+
+                foreach(var column in columns)
+                {
+                    if (!column.IsNullable)
+                    {
+                        string columnName = column.ColumnName;
+
+                        string sql = $"ALTER TABLE \"{tableName}\" ALTER COLUMN \"{columnName}\" SET NOT NULL";
+
+                        Database.ExecuteSqlRaw(sql);
+                    }
+                }
+            }
+        }
+        public void AddIsUnique(DynamicTableRequest dynamicTableRequest)
+        {
+            foreach (var table in dynamicTableRequest.Tables)
+            {
+                string tableName = table.TableName;
+                List<DynamicColumn> columns = table.Columns;
+
+                foreach (var column in columns)
+                {
+                    if (column.IsUnique)
+                    {
+                        string columnName = column.ColumnName;
+
+                        string sql = $"ALTER TABLE \"{tableName}\" ADD CONSTRAINT UQ_{tableName}_{columnName} UNIQUE (\"{columnName}\")";
+
+                        Database.ExecuteSqlRaw(sql);
+                    }
+                }
+            }
         }
     }
+
 }
+

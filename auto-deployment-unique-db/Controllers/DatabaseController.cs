@@ -1,4 +1,5 @@
-﻿using auto_deployment_unique_db.Models;
+﻿using auto_deployment_unique_db.Data;
+using auto_deployment_unique_db.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -17,7 +18,7 @@ namespace auto_deployment_unique_db.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post([FromBody] DynamicTableRequest dynamicTableRequest)
         {
             Guid uniqueIdentifier = Guid.NewGuid();
             string uniqueIdentifierString = uniqueIdentifier.ToString();
@@ -31,7 +32,7 @@ namespace auto_deployment_unique_db.Controllers
                         await connection.OpenAsync();
                     }
 
-                        using (var command = new NpgsqlCommand())
+                    using (var command = new NpgsqlCommand())
                     {
                         command.Connection = connection;
                         command.CommandText = $"CREATE DATABASE \"{uniqueIdentifierString}\"";
@@ -47,15 +48,18 @@ namespace auto_deployment_unique_db.Controllers
                 //local connection string
                 string dynamicConnectionString = $"Server=localhost;Port=5432;Database={uniqueIdentifierString};User Id=postgres;Password=387456";
 
-
-
                 var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
                 optionsBuilder.UseNpgsql(dynamicConnectionString);
 
                 using var dynamicDbContext = new MyDbContext(optionsBuilder.Options);
+                dynamicDbContext.CreateTablesAndColumns(dynamicTableRequest);
+                dynamicDbContext.AddPrimaryKeys(dynamicTableRequest);
+                dynamicDbContext.AddForeignKeys(dynamicTableRequest);
+                dynamicDbContext.AddIsNullable(dynamicTableRequest);
+                dynamicDbContext.AddIsUnique(dynamicTableRequest);
+                dynamicDbContext.SaveChanges();
                 await dynamicDbContext.Database.EnsureCreatedAsync();
                 await dynamicDbContext.Database.MigrateAsync();
-               
 
                 return Ok(new DatabaseModel { UniqueIdentifier = uniqueIdentifierString });
             }
